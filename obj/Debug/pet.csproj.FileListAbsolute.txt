@@ -1,0 +1,5 @@
+D:\Pet\pet\pet\bin\pet.dll
+D:\Pet\pet\pet\bin\pet.pdb
+D:\Pet\pet\pet\obj\Debug\pet.dll
+D:\Pet\pet\pet\obj\Debug\pet.pdb
+D:\Pet\pet\pet\obj\Debug\pet.csprojResolveAssemblyReference.cache
