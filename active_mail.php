@@ -1,6 +1,17 @@
 <html>
+
+             
 <?php
         if($_POST){
+           session_start();
+        $DB_NAME ="userinfo";
+        $SERVER_NAME = "localhost";
+        $PASSWORD ="";
+        $USERNAME = "root";
+        $conn = new mysqli($SERVER_NAME, $USERNAME, $PASSWORD);
+
+            if(isset($_POST["customerEmail"])){
+            
             $uEmail = $_POST["customerEmail"];
             $uContact = $_POST["phone"];
             $uname = $_POST["name"];
@@ -8,13 +19,118 @@
             $uService = $_POST["services"];
             $umsg = $_POST["msg"];
 
+            $_SESSION["uContact"] = $uContact;
+            $_SESSION["DB_NAME"] = "userinfo";
+            $_SESSION["SERVER_NAME"] = "localhost";
+            $_SESSION["USERNAME"] = "root";
+            $_SESSION["PASSWORD"] = "";
 
 
-                  /**
+
+
+       
+
+        $id = rand(111111, 999999);
+
+        // Create connection
+        
+
+         $_SESSION["conn"] = $conn;
+
+        // Check connection
+        if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+        }
+
+     $sql = "INSERT INTO `userinfo`.`user_appointment` (`AID`, `name`, `date`, `email`, `contact`, `service`, `status`, `code`) VALUES (NULL, '$uname', '$uDate', '$uEmail', '$uContact', '$uService', '0', '$id')";
+     mysqli_select_db($conn,$DB_NAME);
+    mysqli_query($conn ,$sql);
+
+
+
+    //Your authentication key
+        $authKey = "110991AzDvVyk5571bf45f";
+
+        //Multiple mobiles numbers separated by comma
+        $mobileNumber = $uContact;
+
+        //Sender ID,While using route4 sender id should be 6 characters long.
+        $senderId = "LFOFPT";
+
+        //Your message to send, Add URL encoding here.
+       // $message = urlencode("Test message");
+        $message = "Dear ".$uname." please enter the OTP : ".$id." to confirm the appointment at Life of Pet";
+
+        //Define route 
+        $route = "3";
+        //Prepare you post parameters
+        $postData = array(
+            'authkey' => $authKey,
+            'mobiles' => $mobileNumber,
+            'message' => $message,
+            'sender' => $senderId,
+            'route' => $route
+        );
+
+        //API URL
+      //  $url="http://sms.tcpctechlinks.com/api/sendhttp.php";
+
+        // init the resource
+        $ch = curl_init();
+        curl_setopt_array($ch, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $postData
+            //,CURLOPT_FOLLOWLOCATION => true
+        ));
+
+
+    //Ignore SSL certificate verification
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+
+        //get response
+        $output = curl_exec($ch);
+
+        //Print error if any
+        if(curl_errno($ch))
+            {
+               // echo 'error:' . curl_error($ch);
+             }
+
+             curl_close($ch);
+
+     } elseif (isset($_POST["otp"])){
+
+ $DB_NAME ="userinfo";
+        $SERVER_NAME = "localhost";
+        $PASSWORD ="";
+        $USERNAME = "root";
+        $conn1 = new mysqli($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME);
+
+            $otp = $_POST["otp"];
+           
+          
+
+          //  $sql1 = "UPDATE `user_appointment` SET `status` = '1' WHERE `code` = '$otp' AND `contact` = '9535038242'";
+          // $sql = "UPDATE `user_appointment` SET `status` = '1' WHERE `code` = '$otp' AND `status` = '0'";
+           $sql = "UPDATE `user_appointment` SET `status` = 1 WHERE `code` = '$otp' AND `status` = 0";
+        if (mysqli_query($conn1, $sql)) {
+            echo "Record updated successfully";
+        } else {
+            echo "Error updating record: " . mysqli_error($conn1);
+        }
+
+        mysqli_close($conn1);
+    
+        /*
     * This example shows settings to use when sending via Google's Gmail servers.
     */
     //SMTP needs accurate times, and the PHP time zone MUST be set
     //This should be done in your php.ini, but this is how to do it if you don't have access to that
+        /*
     date_default_timezone_set('Etc/UTC');
     require 'PHPMailerAutoload.php';
     //Create a new PHPMailer instance
@@ -29,18 +145,18 @@
     //Ask for HTML-friendly debug output
     $mail->Debugoutput = 'html';
     //Set the hostname of the mail server
-    $mail->Host = 'smtp.gmail.com';
+    $mail->Host = 'localhost';
     // use
     // $mail->Host = gethostbyname('smtp.gmail.com');
     // if your network does not support SMTP over IPv6
     //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-    $mail->Port = 587;
+    $mail->Port = 25;
     //Set the encryption system to use - ssl (deprecated) or tls
     $mail->SMTPSecure = 'tls';
     //Whether to use SMTP authentication
     $mail->SMTPAuth = true;
     //Username to use for SMTP authentication - use full email address for gmail
-    $mail->Username = "lifeofpet.com@gmail.com";
+   $mail->Username = "info@lifeofpet.com";
     //Password to use for SMTP authentication
     $mail->Password = "Seyon@168";
     //Set who the message is to be sent from
@@ -57,7 +173,7 @@
 
     $mail->msgHTML("<h1 align='center'>Thanks for using our service</h1>
   <div align='center'>
-    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='90' width='340' alt='lifeofpet'></a>
+    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='140' width='340' alt='lifeofpet'></a>
   </div>
     <div align='center' >
         <h2 style='color:#424242;'>Appointment Details</h2>
@@ -110,18 +226,17 @@
     //Ask for HTML-friendly debug output
     $mail1->Debugoutput = 'html';
     //Set the hostname of the mail server
-    $mail1->Host = 'smtp.gmail.com';
-    // use
-    // $mail->Host = gethostbyname('smtp.gmail.com');
+    $mail1->Host = 'localhost';
+   
     // if your network does not support SMTP over IPv6
     //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-    $mail1->Port = 587;
+    $mail1->Port = 25;
     //Set the encryption system to use - ssl (deprecated) or tls
     $mail1->SMTPSecure = 'tls';
     //Whether to use SMTP authentication
     $mail1->SMTPAuth = true;
     //Username to use for SMTP authentication - use full email address for gmail
-    $mail1->Username = "lifeofpet.com@gmail.com";
+    $mail1->Username = "info@lifeofpet.com";
     //Password to use for SMTP authentication
     $mail1->Password = "Seyon@168";
     //Set who the message is to be sent from
@@ -129,7 +244,7 @@
     //Set an alternative reply-to address
     $mail1->addReplyTo('info@lifeofpet.com', 'lifeofpet');
     //Set who the message is to be sent to
-    $mail1->addAddress('info@LifeOfpet.com', 'Admin');
+    $mail1->addAddress('info@lifeOfpet.com', 'Admin');
     //Set the subject line
     $mail1->Subject = 'New Appointment Registered';
     //Read an HTML message body from an external file, convert referenced images to embedded,
@@ -138,7 +253,7 @@
 
     $mail1->msgHTML("<h1 align='center'>New Appointment Registered</h1>
   <div align='center'>
-    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='90' width='340' alt='lifeofpet'></a>
+    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='150' width='340' alt='lifeofpet'></a>
   </div>
     <div align='center' >
         <h2 style='color:#424242;'>Appointment Details</h2>
@@ -180,11 +295,11 @@
     // $mail->addAttachment('images/phpmailer_mini.png');
     //send the message, check for errors
     
-      }
-
+      }*/ }
+}
 ?>
 
-
+ 
 
 <head id="Head1" runat="server">
     <meta charset="utf-8">
@@ -194,7 +309,7 @@
     <meta name="author" content="">
     <meta name="keywords" content="">
 
-    <title>PetVet | A Pet Shop Responsive HTML Template</title>
+    <title>Life of Pet</title>
 
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
@@ -231,12 +346,12 @@
  
 </head>
 <body>
-    <form >
+     <form method="POST" action="active_mail.php">
         <div>
 
             <div id="loader">
                 <div class="loader-container">
-                    <img src="images/load.png" alt="" class="loader-site spinner">
+                    <img src="images/lifeofpet1.png"  style="width:300px; height:150px;" alt="" class="loader-site spinner">
                 </div>
             </div>
 
@@ -347,7 +462,7 @@
                         <div class="col-md-8 col-md-offset-2 col-xs-12">
                            
                             <div class="appoform-wrapper">
-                                <form method="post" action="mail.php"> <!-- form -->
+                                <form method="post" action="active_mail.php"> <!-- form -->
 
                                     <header class="form-header">
                                         <h3>Registration Completed</h3>
@@ -355,11 +470,20 @@
                                     <div class="post-body-form text-center">
                                         <h2>
                                           Thank you for fiiling up the form <br>
-                                           Your appointment has been registered. <br>
-                                           Please check your email for confirmation message
+                                           Please enter the OTP sent to your mobile number in order to confirm the appointment
                                         </h2>
+                                         <div class="col-md-6" style="margin-left:25%;" >
+                                            <label class="sr-only">Your name</label>
+                                            
+                                            <input id="otp" type="text" name="otp" placeholder="Enter the OTP" class="form-control">
+                                        </div>
+                                        <div class="col-md-12" style="margin-top:20px;">
+                                            <input type="submit" style="width:20%;" id="add" class="btn btn-primary" value="Confirm" onclick="return check();">
+                                                
+                                        </div>
                                     </div>
-                                    
+
+                                   
                                 </form>
                             </div>
                             <!-- end form-container -->
@@ -382,7 +506,7 @@
                         <div class="col-md-4 col-sm-6">
                             <div class="widget">
                                 <div class="text-center">
-                                    <img src="images/flogo.png" alt="" class="img-responsive">
+                                    <img src="images/lifeofpet1.png" alt="" class="img-responsive">
                                     <p>Care with a Human Touch.</p>
                                    
                                 </div>

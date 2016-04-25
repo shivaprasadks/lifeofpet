@@ -1,4 +1,5 @@
 <html>
+
 <script type="text/javascript">
      function check()
             {
@@ -7,6 +8,7 @@
                 {
 
                     alert ("Please Enter a Username");
+                    return false;
                     
                 } else if (document.getElementById('email').value==""
                  || document.getElementById('email').value==undefined) {
@@ -31,201 +33,9 @@
                     return false;
 
                 } else {
-                return true;
-            
-
-        <?php
-        if($_POST){
-            $uEmail = $_POST["customerEmail"];
-            $uContact = $_POST["phone"];
-            $uname = $_POST["name"];
-            $uDate = $_POST["date"];
-            $uService = $_POST["services"];
-            $umsg = $_POST["msg"];
-
-
-
-                  /**
-    * This example shows settings to use when sending via Google's Gmail servers.
-    */
-    //SMTP needs accurate times, and the PHP time zone MUST be set
-    //This should be done in your php.ini, but this is how to do it if you don't have access to that
-    date_default_timezone_set('Etc/UTC');
-    require 'PHPMailerAutoload.php';
-    //Create a new PHPMailer instance
-    $mail = new PHPMailer;
-    //Tell PHPMailer to use SMTP
-    $mail->isSMTP();
-    //Enable SMTP debugging
-    // 0 = off (for production use)
-    // 1 = client messages
-    // 2 = client and server messages
-    $mail->SMTPDebug = 2;
-    //Ask for HTML-friendly debug output
-    $mail->Debugoutput = 'html';
-    //Set the hostname of the mail server
-    $mail->Host = 'localhost';
-    // use
-    // $mail->Host = gethostbyname('smtp.gmail.com');
-    // if your network does not support SMTP over IPv6
-    //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-    $mail->Port = 25;
-    //Set the encryption system to use - ssl (deprecated) or tls
-    $mail->SMTPSecure = 'tls';
-    //Whether to use SMTP authentication
-    $mail->SMTPAuth = true;
-    //Username to use for SMTP authentication - use full email address for gmail
-   $mail->Username = "info@lifeofpet.com";
-  //Password to use for SMTP authentication
-  $mail->Password = "Seyon@168";
-    //Set who the message is to be sent from
-    $mail->setFrom('info@lifeofpet.com', 'lifeofpet');
-    //Set an alternative reply-to address
-    $mail->addReplyTo('info@lifeofpet.com', 'lifeofpet');
-    //Set who the message is to be sent to
-    $mail->addAddress($_POST["customerEmail"], $_POST["name"]);
-    //Set the subject line
-    $mail->Subject = 'Comfirmation of appointment';
-    //Read an HTML message body from an external file, convert referenced images to embedded,
-    //convert HTML into a basic plain-text alternative body
-    //$mail->msgHTML(file_get_contents('contents.html'), dirname(__FILE__));
-
-    $mail->msgHTML("<h1 align='center'>Thanks for using our service</h1>
-  <div align='center'>
-    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='90' width='340' alt='lifeofpet'></a>
-  </div>
-    <div align='center' >
-        <h2 style='color:#424242;'>Appointment Details</h2>
-        <div >
-            <table>
-            <tr>
-                <th>Name:</th>
-                    <td>$uname</td>
-                </tr>
-                <tr>
-                    <th>Contact:</th>
-                    <td>$uContact</td>
-                </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td>$uEmail</td>
-                </tr>
-                <tr>
-                    <th>Date:</th>
-                    <td>$uDate</td>
-                </tr>
-                <tr>
-                    <th>Service type:</th>
-                    <td>$uService</td>
-                </tr>
-            </table>    
-        </div>
-    </div>
-    <p>Thanks for visiting us</p>
-    <a href='http://www.lifeofpet.com/'>contact us</a>");
-    //Replace the plain text body with one created manually
-    $mail->AltBody = 'This is a plain-text message body';
-    //Attach an image file
-
-    // $mail->addAttachment('images/phpmailer_mini.png');
-    //send the message, check for errors
-    if (!$mail->send()) {
-        echo "Mailer Error: " . $mail->ErrorInfo;
-    } else {
-        echo "Message sent!";
-    } 
-
-
-
-    //Create a new PHPMailer instance
-    $mail1 = new PHPMailer;
-    //Tell PHPMailer to use SMTP
-    $mail1->isSMTP();
-    //Enable SMTP debugging
-    // 0 = off (for production use)
-    // 1 = client messages
-    // 2 = client and server messages
-    $mail1->SMTPDebug = 2;
-    //Ask for HTML-friendly debug output
-    $mail1->Debugoutput = 'html';
-    //Set the hostname of the mail server
-    $mail1->Host = 'localhost';
-   
-    // if your network does not support SMTP over IPv6
-    //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-    $mail1->Port = 25;
-    //Set the encryption system to use - ssl (deprecated) or tls
-    $mail1->SMTPSecure = 'tls';
-    //Whether to use SMTP authentication
-    $mail1->SMTPAuth = true;
-    //Username to use for SMTP authentication - use full email address for gmail
-    $mail1->Username = "info@lifeofpet.com";
-  //Password to use for SMTP authentication
-  $mail1->Password = "Seyon@168";
-    //Set who the message is to be sent from
-    $mail1->setFrom('info@lifeofpet.com', 'lifeofpet');
-    //Set an alternative reply-to address
-    $mail1->addReplyTo('info@lifeofpet.com', 'lifeofpet');
-    //Set who the message is to be sent to
-    $mail1->addAddress('info@lifeOfpet.com', 'Admin');
-    //Set the subject line
-    $mail1->Subject = 'New Appointment Registered';
-    //Read an HTML message body from an external file, convert referenced images to embedded,
-    //convert HTML into a basic plain-text alternative body
-    //$mail->msgHTML(file_get_contents('contents.html'), dirname(__FILE__));
-
-    $mail1->msgHTML("<h1 align='center'>New Appointment Registered</h1>
-  <div align='center'>
-    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='90' width='340' alt='lifeofpet'></a>
-  </div>
-    <div align='center' >
-        <h2 style='color:#424242;'>Appointment Details</h2>
-        <div >
-            <table>
-            <tr>
-                <th>Name:</th>
-                    <td>$uname</td>
-                </tr>
-                <tr>
-                    <th>Contact:</th>
-                    <td>$uContact</td>
-                </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td>$uEmail</td>
-                </tr>
-                <tr>
-                    <th>Date:</th>
-                    <td>$uDate</td>
-                </tr>
-                <tr>
-                    <th>Service type:</th>
-                    <td>$uService</td>
-                </tr>
-                <tr>
-                    <th>Message:</th>
-                    <td>$umsg</td>
-                </tr>
-            </table>    
-        </div>
-    </div>
-    <p>Thanks for visiting us</p>
-    <a href='http://www.lifeofpet.com/'>contact us</a>");
-    //Replace the plain text body with one created manually
-    $mail1->AltBody = 'This is a plain-text message body';
-    //Attach an image file
-
-    // $mail->addAttachment('images/phpmailer_mini.png');
-    //send the message, check for errors
-    if (!$mail1->send()) {
-        echo "Mailer Error: " . $mail1->ErrorInfo;
-    } else {
-        echo "Message sent!";
-    } 
-      }
-
-?>
-} }
+                return true; 
+              } 
+}
 </script>
 <style type="text/css">
 /* -------------------- Page Styles (not required) */
@@ -396,7 +206,7 @@ select#soflow-color {
  
 </head>
 <body>
-    <form method="POST" action="appointment.php">
+    <form method="POST" action="active_mail.php">
         <div>
 
             <div id="loader">
@@ -543,6 +353,37 @@ select#soflow-color {
                                             <input type="email" id="email" name="customerEmail" placeholder="Email address *" class="form-control">
                                           
                                         </div>
+                                        <?php
+                                              if(isset($_GET['rate'])){
+                                                $rate = $_GET['rate'];
+                                                if ($rate == 499) {
+                                                  $str = "Vet On Call (Wellness)";
+                                                } elseif ($rate == 599) {
+                                                  $str = "Vet On Call (Illness)";
+                                                } elseif ($rate == 1299) {
+                                                  $str = "Vet On Call (Vaccination)";
+                                                }
+                                              ?>
+                                          <div class="col-md-6">
+                                            <label class="sr-only">Rate </label>
+                                            
+                                            <input id="rate" style="font-size:medium; font-style:oblique;" type="text" name="rate" placeholder="Rate" value= "Rate : <?php echo $rate; ?> /-" class="form-control" readonly>
+                                        </div>
+
+                                         
+                                           
+                                            <div class="col-md-6">
+                                            <label class="sr-only">Service Type</label> 
+                                            <input type="email" id="services" name="services"   value=" <?php echo $str; ?>" class="form-control" readonly>
+                                          
+</div>
+                                            
+                                        
+
+                                       
+                                       <?php  } else { 
+                                        ?> 
+                                         
                                    
                                          
 
@@ -560,6 +401,7 @@ select#soflow-color {
                                                  <option value="Adoption" >Adoption</option>
                                             </select>
                                         </div>
+                                        <?php } ?>
                                             <div class="col-md-12" style="width: 100%; ">
                                               
                                                 <input type="text" name="msg" style="height:30%;" id="msg" placeholder="Message" class="form-control">
