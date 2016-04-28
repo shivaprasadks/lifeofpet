@@ -355,10 +355,12 @@ select#soflow-color {
                                         </div>
                                         <?php
                                               if(isset($_GET['rate'])){
-                                                $rate = $_GET['rate'];
+                                                $result = $_GET['rate'];
+                                                 $result_explode = explode('|', $result);
+                                                 $rate = $result_explode[1];
                                                 if ($rate == 499) {
                                                   $str = "Vet On Call (Wellness)";
-                                                } elseif ($rate == 599) {
+                                                } elseif ($rate == 549) {
                                                   $str = "Vet On Call (Illness)";
                                                 } elseif ($rate == 1299) {
                                                   $str = "Vet On Call (Vaccination)";
@@ -526,11 +528,21 @@ select#soflow-color {
                 $("#datepicker").datepicker();
             });
         </script>
-
+    <!-- ClickDesk Live Chat Service for websites -->
+  <script type='text/javascript'>
+    var _glc =_glc || []; _glc.push('all_ag9zfmNsaWNrZGVza2NoYXRyDwsSBXVzZXJzGKfBmOkTDA');
+    var glcpath = (('https:' == document.location.protocol) ? 'https://my.clickdesk.com/clickdesk-ui/browser/' : 
+    'http://my.clickdesk.com/clickdesk-ui/browser/');
+    var glcp = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+    var glcspt = document.createElement('script'); glcspt.type = 'text/javascript'; 
+    glcspt.async = true; glcspt.src = glcpath + 'livechat-new.js';
+    var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
+  </script>
+  <!-- End of ClickDesk -->
        
     </form>
     
-
+</body?
 
 
 
