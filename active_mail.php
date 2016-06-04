@@ -1,68 +1,53 @@
 <html>
-
-             
 <?php
-        if($_POST){
-           session_start();
-        $DB_NAME ="userinfo";
-        $SERVER_NAME = "localhost";
-        $PASSWORD ="";
-        $USERNAME = "root";
-        $conn = new mysqli($SERVER_NAME, $USERNAME, $PASSWORD);
+include_once './mail.php';
 
-            if(isset($_POST["customerEmail"])){
-            
-            $uEmail = $_POST["customerEmail"];
-            $uContact = $_POST["phone"];
-            $uname = $_POST["name"];
-            $uDate = $_POST["date"];
-            $uService = $_POST["services"];
-            $umsg = $_POST["msg"];
-
-            $_SESSION["uContact"] = $uContact;
-            $_SESSION["DB_NAME"] = "userinfo";
-            $_SESSION["SERVER_NAME"] = "localhost";
-            $_SESSION["USERNAME"] = "root";
-            $_SESSION["PASSWORD"] = "";
-
-
-
-
-       
-
-        $id = rand(111111, 999999);
-
-        // Create connection
+if ($_POST)
+  {
+    
+    $DB_NAME     = "mosambit_lop";
+    $SERVER_NAME = "localhost";
+    $PASSWORD    = "Seyon@168";
+    $USERNAME    = "mosambit_lop";
+    $conn        = new mysqli($SERVER_NAME, $USERNAME, $PASSWORD);
+    
+    if (isset($_POST["customerEmail"]))
+      {
         
-
-         $_SESSION["conn"] = $conn;
-
-        // Check connection
-        if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-        }
-
-     $sql = "INSERT INTO `userinfo`.`user_appointment` (`AID`, `name`, `date`, `email`, `contact`, `service`, `status`, `code`) VALUES (NULL, '$uname', '$uDate', '$uEmail', '$uContact', '$uService', '0', '$id')";
-     mysqli_select_db($conn,$DB_NAME);
-    mysqli_query($conn ,$sql);
-
-
-
-    //Your authentication key
+        $uEmail   = $_POST["customerEmail"];
+        $uContact = $_POST["phone"];
+        $uname    = $_POST["name"];
+        $uDate    = $_POST["date"];
+        $uService = $_POST["services"];
+        $umsg     = $_POST["msg"];
+        
+      $id = rand(111111, 999999);
+        
+      // Check connection
+        if ($conn->connect_error)
+          {
+            die("Connection failed: " . $conn->connect_error);
+          }
+        
+        $sql = "INSERT INTO `members` (`AID`, `name`, `date`, `email`, `contact`, `service`, `status`, `code`) VALUES (NULL, '$uname', '$uDate', '$uEmail', '$uContact', '$uService', '0', '$id')";
+        mysqli_select_db($conn, $DB_NAME);
+        mysqli_query($conn, $sql);
+        
+        //Your authentication key
         $authKey = "110991AzDvVyk5571bf45f";
-
+        
         //Multiple mobiles numbers separated by comma
         $mobileNumber = $uContact;
-
+        
         //Sender ID,While using route4 sender id should be 6 characters long.
         $senderId = "LFOFPT";
-
+        
         //Your message to send, Add URL encoding here.
-       // $message = urlencode("Test message");
-        $message = "Dear ".$uname." please enter the OTP : ".$id." to confirm the appointment at Life of Pet";
-
+        // $message = urlencode("Test message");
+        $message = "Dear " . $uname . " please enter the OTP : " . $id . " to confirm the appointment at Life of Pet";
+        
         //Define route 
-        $route = "3";
+        $route    = "3";
         //Prepare you post parameters
         $postData = array(
             'authkey' => $authKey,
@@ -71,10 +56,10 @@
             'sender' => $senderId,
             'route' => $route
         );
-
+        
         //API URL
-      //  $url="http://sms.tcpctechlinks.com/api/sendhttp.php";
-
+        $url = "http://sms.tcpctechlinks.com/api/sendhttp.php";
+        
         // init the resource
         $ch = curl_init();
         curl_setopt_array($ch, array(
@@ -84,219 +69,78 @@
             CURLOPT_POSTFIELDS => $postData
             //,CURLOPT_FOLLOWLOCATION => true
         ));
-
-
-    //Ignore SSL certificate verification
+        
+        
+        //Ignore SSL certificate verification
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-
+        
+        
         //get response
         $output = curl_exec($ch);
-
+        
         //Print error if any
-        if(curl_errno($ch))
-            {
-               // echo 'error:' . curl_error($ch);
-             }
-
-             curl_close($ch);
-
-     } elseif (isset($_POST["otp"])){
-
- $DB_NAME ="userinfo";
-        $SERVER_NAME = "localhost";
-        $PASSWORD ="";
-        $USERNAME = "root";
-        $conn1 = new mysqli($SERVER_NAME, $USERNAME, $PASSWORD, $DB_NAME);
-
-            $otp = $_POST["otp"];
-           
-          
-
-          //  $sql1 = "UPDATE `user_appointment` SET `status` = '1' WHERE `code` = '$otp' AND `contact` = '9535038242'";
-          // $sql = "UPDATE `user_appointment` SET `status` = '1' WHERE `code` = '$otp' AND `status` = '0'";
-           $sql = "UPDATE `user_appointment` SET `status` = 1 WHERE `code` = '$otp' AND `status` = 0";
-        if (mysqli_query($conn1, $sql)) {
-            echo "Record updated successfully";
-        } else {
-            echo "Error updating record: " . mysqli_error($conn1);
-        }
-
-        mysqli_close($conn1);
+        if (curl_errno($ch))
+          {
+            // echo 'error:' . curl_error($ch);
+          }
+        
+        curl_close($ch);
+        
+      }
+    elseif (isset($_POST["otp"]))
+      {
+        
+        
+        $otp = $_POST["otp"];
+        
+        
+        $sql = "UPDATE `members` SET `status` = '1' WHERE `code` = '$otp'";
+        //$res = mysql_query($sql,$con);
+        mysqli_select_db($conn, $DB_NAME);
+        $res = mysqli_query($conn, $sql);
+        
+         if ($res == true)
+          {
+            $sql2 = "SELECT * FROM members  WHERE code = $otp";
+            
+            $result = $conn->query($sql2);
+            
+            if ($result->num_rows > 0)
+              {
+                // output data of each row
+                while ($row = $result->fetch_assoc())
+                  {
+                    //echo "id: " . $row["name"] . " - Name: " . $row["contact"] . " " . $row["email"] . "<br>";
+                    $uname    = $row["name"];
+                    $uContact = $row["contact"];
+                    $uEmail   = $row["email"];
+                    $uDate    = $row["date"];
+                    $uService = $row["service"];
+                    
+                   $mymail = new Mail_Send();
+            //Mymail($uName,$uContact,$uEmail,$uService,$uDate)
+            $mymail->MymailUser($uname,$uContact,$uEmail,$uService,$uDate);
     
-        /*
-    * This example shows settings to use when sending via Google's Gmail servers.
-    */
-    //SMTP needs accurate times, and the PHP time zone MUST be set
-    //This should be done in your php.ini, but this is how to do it if you don't have access to that
-        /*
-    date_default_timezone_set('Etc/UTC');
-    require 'PHPMailerAutoload.php';
-    //Create a new PHPMailer instance
-    $mail = new PHPMailer;
-    //Tell PHPMailer to use SMTP
-    $mail->isSMTP();
-    //Enable SMTP debugging
-    // 0 = off (for production use)
-    // 1 = client messages
-    // 2 = client and server messages
-    $mail->SMTPDebug = 2;
-    //Ask for HTML-friendly debug output
-    $mail->Debugoutput = 'html';
-    //Set the hostname of the mail server
-    $mail->Host = 'localhost';
-    // use
-    // $mail->Host = gethostbyname('smtp.gmail.com');
-    // if your network does not support SMTP over IPv6
-    //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-    $mail->Port = 25;
-    //Set the encryption system to use - ssl (deprecated) or tls
-    $mail->SMTPSecure = 'tls';
-    //Whether to use SMTP authentication
-    $mail->SMTPAuth = true;
-    //Username to use for SMTP authentication - use full email address for gmail
-   $mail->Username = "info@lifeofpet.com";
-    //Password to use for SMTP authentication
-    $mail->Password = "Seyon@168";
-    //Set who the message is to be sent from
-    $mail->setFrom('info@lifeofpet.com', 'lifeofpet');
-    //Set an alternative reply-to address
-    $mail->addReplyTo('info@lifeofpet.com', 'lifeofpet');
-    //Set who the message is to be sent to
-    $mail->addAddress($_POST["customerEmail"], $_POST["name"]);
-    //Set the subject line
-    $mail->Subject = 'Comfirmation of appointment';
-    //Read an HTML message body from an external file, convert referenced images to embedded,
-    //convert HTML into a basic plain-text alternative body
-    //$mail->msgHTML(file_get_contents('contents.html'), dirname(__FILE__));
-
-    $mail->msgHTML("<h1 align='center'>Thanks for using our service</h1>
-  <div align='center'>
-    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='140' width='340' alt='lifeofpet'></a>
-  </div>
-    <div align='center' >
-        <h2 style='color:#424242;'>Appointment Details</h2>
-        <div >
-            <table>
-            <tr>
-                <th>Name:</th>
-                    <td>$uname</td>
-                </tr>
-                <tr>
-                    <th>Contact:</th>
-                    <td>$uContact</td>
-                </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td>$uEmail</td>
-                </tr>
-                <tr>
-                    <th>Date:</th>
-                    <td>$uDate</td>
-                </tr>
-                <tr>
-                    <th>Service type:</th>
-                    <td>$uService</td>
-                </tr>
-            </table>    
-        </div>
-    </div>
-    <p>Thanks for visiting us</p>
-    <a href='http://www.lifeofpet.com/'>contact us</a>");
-    //Replace the plain text body with one created manually
-    $mail->AltBody = 'This is a plain-text message body';
-    //Attach an image file
-
-    // $mail->addAttachment('images/phpmailer_mini.png');
-    //send the message, check for errors
-    
-
-
-
-    //Create a new PHPMailer instance
-    $mail1 = new PHPMailer;
-    //Tell PHPMailer to use SMTP
-    $mail1->isSMTP();
-    //Enable SMTP debugging
-    // 0 = off (for production use)
-    // 1 = client messages
-    // 2 = client and server messages
-    $mail1->SMTPDebug = 2;
-    //Ask for HTML-friendly debug output
-    $mail1->Debugoutput = 'html';
-    //Set the hostname of the mail server
-    $mail1->Host = 'localhost';
-   
-    // if your network does not support SMTP over IPv6
-    //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-    $mail1->Port = 25;
-    //Set the encryption system to use - ssl (deprecated) or tls
-    $mail1->SMTPSecure = 'tls';
-    //Whether to use SMTP authentication
-    $mail1->SMTPAuth = true;
-    //Username to use for SMTP authentication - use full email address for gmail
-    $mail1->Username = "info@lifeofpet.com";
-    //Password to use for SMTP authentication
-    $mail1->Password = "Seyon@168";
-    //Set who the message is to be sent from
-    $mail1->setFrom('info@lifeofpet.com', 'lifeofpet');
-    //Set an alternative reply-to address
-    $mail1->addReplyTo('info@lifeofpet.com', 'lifeofpet');
-    //Set who the message is to be sent to
-    $mail1->addAddress('info@lifeOfpet.com', 'Admin');
-    //Set the subject line
-    $mail1->Subject = 'New Appointment Registered';
-    //Read an HTML message body from an external file, convert referenced images to embedded,
-    //convert HTML into a basic plain-text alternative body
-    //$mail->msgHTML(file_get_contents('contents.html'), dirname(__FILE__));
-
-    $mail1->msgHTML("<h1 align='center'>New Appointment Registered</h1>
-  <div align='center'>
-    <a href='https://www.lifeofpet.com/'><img src='images/lifeofpet1.png' height='150' width='340' alt='lifeofpet'></a>
-  </div>
-    <div align='center' >
-        <h2 style='color:#424242;'>Appointment Details</h2>
-        <div >
-            <table>
-            <tr>
-                <th>Name:</th>
-                    <td>$uname</td>
-                </tr>
-                <tr>
-                    <th>Contact:</th>
-                    <td>$uContact</td>
-                </tr>
-                <tr>
-                    <th>Email:</th>
-                    <td>$uEmail</td>
-                </tr>
-                <tr>
-                    <th>Date:</th>
-                    <td>$uDate</td>
-                </tr>
-                <tr>
-                    <th>Service type:</th>
-                    <td>$uService</td>
-                </tr>
-                <tr>
-                    <th>Message:</th>
-                    <td>$umsg</td>
-                </tr>
-            </table>    
-        </div>
-    </div>
-    <p>Thanks for visiting us</p>
-    <a href='http://www.lifeofpet.com/'>contact us</a>");
-    //Replace the plain text body with one created manually
-    $mail1->AltBody = 'This is a plain-text message body';
-    //Attach an image file
-
-    // $mail->addAttachment('images/phpmailer_mini.png');
-    //send the message, check for errors
-    
-      }*/ }
-}
+            $mymail->MymailAdmin($uname,$uContact,$uEmail,$uService,$uDate);
+                  }
+              }
+            else
+              {
+                echo "0 results";
+              }
+            $message = "Your Appointment has been confirmed  Thank you";
+             echo "<script type='text/javascript'>alert('$message'); location.href = 'index.html';</script>";
+            
+            
+          }
+        else
+          {
+            $message = "Invalid OTP or the OTP has been expired";
+            echo "<script type='text/javascript'>alert('$message');</script>";
+          }
+      }
+  }
 ?>
 
  
@@ -578,8 +422,18 @@
 
        
     </form>
-    
-
+    <!-- ClickDesk Live Chat Service for websites -->
+    <script type='text/javascript'>
+        var _glc =_glc || []; _glc.push('all_ag9zfmNsaWNrZGVza2NoYXRyDwsSBXVzZXJzGKfBmOkTDA');
+        var glcpath = (('https:' == document.location.protocol) ? 'https://my.clickdesk.com/clickdesk-ui/browser/' : 
+        'http://my.clickdesk.com/clickdesk-ui/browser/');
+        var glcp = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+        var glcspt = document.createElement('script'); glcspt.type = 'text/javascript'; 
+        glcspt.async = true; glcspt.src = glcpath + 'livechat-new.js';
+        var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
+    </script>
+    <!-- End of ClickDesk -->
+</body>
 
 
 
